@@ -27,14 +27,14 @@ func main() {
 }
 
 func Error(w http.ResponseWriter, f string, args ...interface{}) {
+	w.WriteHeader(http.StatusInternalServerError)
 	fmt.Fprintf(os.Stderr, "Error: "+f+"\n", args)
 	fmt.Fprintf(w, "Error: "+f, args)
-	w.WriteHeader(http.StatusInternalServerError)
 }
 
 func live(w http.ResponseWriter, req *http.Request) {
-	fmt.Fprintln(w, "It's ALIVE")
 	w.WriteHeader(http.StatusOK)
+	fmt.Fprintln(w, "It's ALIVE")
 }
 
 func hook(w http.ResponseWriter, req *http.Request) {

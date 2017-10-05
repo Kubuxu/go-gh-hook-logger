@@ -13,7 +13,10 @@ import (
 var (
 	secKey = os.Getenv("GH_SECRET")
 	port   = os.Getenv("PORT")
+	file   = os.Getenv("STORAGE_FILE")
 )
+
+var f *os.File
 
 func main() {
 	if port == "" {
@@ -24,6 +27,13 @@ func main() {
 	}
 	fmt.Printf("handler is listening on :8080/hook")
 
+	var err error
+	f, err = os.OpenFile(file, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Fatalf("could not open file '%s', err: %s\n", file, err)
+		return
+	}
+
 	http.HandleFunc("/hook", hook)
 	http.HandleFunc("/live", live)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
@@ -31,7 +41,8 @@ func main() {
 
 func Error(w http.ResponseWriter, f string, args ...interface{}) {
 	w.WriteHeader(http.StatusInternalServerError)
-	fmt.Fprintf(os.Stderr, "Error: "+f+"\n", args)
+	log.Prefix()
+	log.Printf("Error: "+f+"\n", args)
 	fmt.Fprintf(w, "Error: "+f, args)
 }
 
@@ -62,7 +73,11 @@ func hook(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	_, err = os.Stdout.Write(b)
+	_, err = f.Write(b)
+	if err != nil {
+		Error(w, "while writing to stdout %s", err)
+	}
+	_, err = f.Write([]byte{'\n'})
 	if err != nil {
 		Error(w, "while writing to stdout %s", err)
 	}

@@ -19,6 +19,9 @@ func main() {
 	if port == "" {
 		port = "8080"
 	}
+	if secKey == "" {
+		log.Fatal("secKey is empty")
+	}
 	fmt.Printf("handler is listening on :8080/hook")
 
 	http.HandleFunc("/hook", hook)

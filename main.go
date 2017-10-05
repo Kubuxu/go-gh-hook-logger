@@ -21,7 +21,8 @@ func main() {
 	}
 	fmt.Printf("handler is listening on :8080/hook")
 
-	http.HandleFunc("/hook", handleFunc)
+	http.HandleFunc("/hook", hook)
+	http.HandleFunc("/live", live)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
 
@@ -31,7 +32,12 @@ func Error(w http.ResponseWriter, f string, args ...interface{}) {
 	w.WriteHeader(http.StatusInternalServerError)
 }
 
-func handleFunc(w http.ResponseWriter, req *http.Request) {
+func live(w http.ResponseWriter, req *http.Request) {
+	fmt.Fprintln(w, "It's ALIVE")
+	w.WriteHeader(http.StatusOK)
+}
+
+func hook(w http.ResponseWriter, req *http.Request) {
 	hook, err := gh.Parse(nil, req)
 	if err != nil {
 		Error(w, "could not auth: %s", err)

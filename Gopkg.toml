@@ -24,3 +24,9 @@
 [[constraint]]
   name = "github.com/rjz/githubhook"
   version = "0.0.1"
+
+[metadata.heroku]
+  root-package = "github.com/Kubuxu/go-gh-hook-logger"
+  go-version = "go1.8.3"
+  install = [ "." ]
+  ensure = "false"

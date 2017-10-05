@@ -38,7 +38,7 @@ func live(w http.ResponseWriter, req *http.Request) {
 }
 
 func hook(w http.ResponseWriter, req *http.Request) {
-	hook, err := gh.Parse(nil, req)
+	hook, err := gh.Parse(secKey, req)
 	if err != nil {
 		Error(w, "could not auth: %s", err)
 		return
